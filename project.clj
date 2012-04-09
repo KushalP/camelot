@@ -1,4 +1,4 @@
-(defproject camelot "0.0.1-SNAPSHOT"
+(defproject camelot "0.1.0"
   :description "A fast, nimble PDF generation and manipulation library"
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.apache.pdfbox/pdfbox "1.6.0"]]
