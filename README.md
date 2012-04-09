@@ -13,10 +13,15 @@ Add camelot as a dependency to your project. Jars are [published to clojars.org]
 Start using the library!
 
 ``` clojure
+;; Create PDF files with some text.
 (-> {:font "Helvetica-Bold"
      :size 12
      :text "Hello World"}
     (save-as "/tmp/test.pdf"))
+
+;; Merge a number of existing PDF files.
+(-> ["filea.pdf" "fileb.pdf" "filec.pdf" "filed.pdf"]
+    (merge-pdfs "/tmp/merged.pdf"
 ```
 
 ## Development
