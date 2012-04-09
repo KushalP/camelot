@@ -1,4 +1,4 @@
-0.1.3 (in progress)
+0.1.3 (2012-04-09)
 ==================
 
 * Added `(get-metadata ..)` to read metadata from a pre-existing PDF file.
