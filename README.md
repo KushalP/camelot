@@ -4,6 +4,12 @@ Camelot is a fast, nimble PDF generation and manipulation library.
 
 [![Continuous Integration status](https://secure.travis-ci.org/KushalP/camelot.png)](http://travis-ci.org/KushalP/camelot)
 
+### Why the name?
+
+In the Spring of 1991, Dr. John Warnock released a paper which first described the [Camelot Project](http://www.planetpdf.com/planetpdf/pdfs/warnock_camelot.pdf). The project's goal was to solve a fundamental problem that confronts today's companies. The problem is concerned with our ability to communicate visual material between different computer applications and systems.
+
+Camelot (this library) is named after the thoughts and discussions laid out in that paper.
+
 ## Usage
 
 Add camelot as a dependency to your project. Jars are [published to clojars.org](https://clojars.org/camelot).
