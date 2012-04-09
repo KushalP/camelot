@@ -1,4 +1,4 @@
-0.1.2 (in progress)
+0.1.2 (2012-04-09)
 ==================
 
 * The document map can now contain (some) metadata, which will be affixed to the PDF when saving.
