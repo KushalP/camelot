@@ -30,3 +30,8 @@
        :size 12
        :text text}
       (save-as filename)))
+
+(defn temp-pdf-filename
+  "Creates a temporary pdf filename"
+  []
+  (str "/tmp/" (random-string 40) ".pdf"))
