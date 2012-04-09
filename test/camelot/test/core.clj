@@ -1,7 +1,9 @@
 (ns camelot.test.core
-  (:use [camelot.core])
+  (:use [camelot.core]
+        [camelot.test.helpers])
   (:use [clojure.test])
-  (:import (org.apache.pdfbox.pdmodel.font PDType1Font)))
+  (:import (org.apache.pdfbox.pdmodel PDDocument)
+           (org.apache.pdfbox.pdmodel.font PDType1Font)))
 
 (deftest converts-font-string-to-enum
   (is (= PDType1Font/TIMES_ROMAN (font "Times-Roman")))
@@ -18,3 +20,14 @@
   (is (= PDType1Font/COURIER_BOLD_OBLIQUE (font "Courier-BoldOblique")))
   (is (= PDType1Font/SYMBOL (font "Symbol")))
   (is (= PDType1Font/ZAPF_DINGBATS (font "ZapfDingbats"))))
+
+(deftest save-as-builds-a-basic-pdf-file
+  (let [filestr  (random-string 20)
+        filename (str "/tmp/" filestr ".pdf")
+        doc      (-> {:font "Helvetica-Bold"
+                      :size 12
+                      :text "Hello World"}
+                     (save-as filename))]
+    (is (instance? PDDocument doc))
+    (is (= "file" (file-kind filename)))
+    (is (= 1 (.getPageCount doc)))))

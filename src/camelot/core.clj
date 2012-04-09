@@ -1,5 +1,7 @@
 (ns camelot.core
-  (:import (org.apache.pdfbox.pdmodel.font PDType1Font)))
+  (:import (org.apache.pdfbox.pdmodel PDDocument PDPage)
+           (org.apache.pdfbox.pdmodel.edit PDPageContentStream)
+           (org.apache.pdfbox.pdmodel.font PDType1Font)))
 
 (defonce font-map
   {"Times-Roman"           PDType1Font/TIMES_ROMAN
@@ -21,3 +23,22 @@
   "Given a string representing a font, returns the equivalent ENUM."
   [^String name]
   (font-map name))
+
+(defn save-as
+  [doc-map filename]
+  "Given a map representing the document to be built, and a filename, saves the PDF."
+  (let [page (PDPage.)
+        doc (doto (PDDocument.)
+              (.addPage page))
+        content (PDPageContentStream. doc page)]
+    (try
+      (.beginText content)
+      (.setFont content (font (doc-map :font)) (doc-map :size))
+      (.moveTextPositionByAmount content 100 700)
+      (.drawString content (doc-map :text))
+      (.endText content)
+      (.close content)
+      (.save doc filename)
+      (finally (if (not (nil? doc))
+                 (.close doc))))
+    doc))
