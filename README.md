@@ -24,7 +24,10 @@ Start using the library!
 ;; Create PDF files with some text.
 (-> {:font "Helvetica-Bold"
      :size 12
-     :text "Hello World"}
+     :text "Hello World!"
+     :metadata {:author   "Joe Bloggs"
+                :title    "Hello World"
+                :keywords ["test" "hello" "world"]}}
     (save-as "/tmp/test.pdf"))
 
 ;; Merge a number of existing PDF files.

@@ -1,5 +1,6 @@
 (ns camelot.core
-  (:import (org.apache.pdfbox.pdmodel PDDocument PDPage)
+  (:require [clojure.string :as str])
+  (:import (org.apache.pdfbox.pdmodel PDDocument PDDocumentInformation PDPage)
            (org.apache.pdfbox.pdmodel.edit PDPageContentStream)
            (org.apache.pdfbox.pdmodel.font PDType1Font)
            (org.apache.pdfbox.util PDFMergerUtility)
@@ -42,6 +43,13 @@
       (.drawString content (doc-map :text))
       (.endText content)
       (.close content)
+      (when (contains? doc-map :metadata)
+        (let [meta (PDDocumentInformation.)
+              data (doc-map :metadata)]
+          (.setAuthor meta (data :author))
+          (.setKeywords meta (str/join ", " (data :keywords)))
+          (.setTitle meta (data :title))
+          (.setDocumentInformation doc meta)))
       (.save doc filename)
       (finally (if (not (nil? doc))
                  (.close doc))))

@@ -39,6 +39,23 @@
     (is (= "file" (file-kind filename)))
     (is (= 1 (.getPageCount doc)))))
 
+(deftest save-as-builds-a-basic-pdf-file-with-metadata
+  (let [filename (temp-pdf-filename)
+        doc      (-> {:font "Helvetica-Bold"
+                      :size 12
+                      :text "Hello World"
+                      :metadata {:author   "Joe Bloggs"
+                                 :title    "Hello World"
+                                 :keywords ["test" "hello" "world"]}}
+                     (save-as filename))
+        info     (.getDocumentInformation doc)]
+    (is (instance? PDDocument doc))
+    (is (= "file" (file-kind filename)))
+    (is (= 1 (.getPageCount doc)))
+    (is (= "Joe Bloggs" (.getAuthor info)))
+    (is (= "test, hello, world" (.getKeywords info)))
+    (is (= "Hello World" (.getTitle info)))))
+
 (deftest merge-pdf-bad-input-throws-assertion-error
   (let [filename   (temp-pdf-filename)
         string-vec ["one" "two"]]
