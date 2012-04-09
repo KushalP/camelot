@@ -4,7 +4,8 @@
            (org.apache.pdfbox.pdmodel.edit PDPageContentStream)
            (org.apache.pdfbox.pdmodel.font PDType1Font)
            (org.apache.pdfbox.util PDFMergerUtility)
-           (java.io FileInputStream)))
+           (java.io FileInputStream))
+  (:use [camelot.metadata]))
 
 (defonce font-map
   {"Times-Roman"           PDType1Font/TIMES_ROMAN
@@ -32,9 +33,9 @@
   [doc-map filename]
   {:pre [(and (map? doc-map)
               (string? filename))]}
-  (let [page (PDPage.)
-        doc (doto (PDDocument.)
-              (.addPage page))
+  (let [page    (PDPage.)
+        doc     (doto (PDDocument.)
+                  (.addPage page))
         content (PDPageContentStream. doc page)]
     (try
       (.beginText content)
@@ -44,12 +45,7 @@
       (.endText content)
       (.close content)
       (when (contains? doc-map :metadata)
-        (let [meta (PDDocumentInformation.)
-              data (doc-map :metadata)]
-          (.setAuthor meta (data :author))
-          (.setKeywords meta (str/join ", " (data :keywords)))
-          (.setTitle meta (data :title))
-          (.setDocumentInformation doc meta)))
+        (set-metadata doc (doc-map :metadata)))
       (.save doc filename)
       (finally (if (not (nil? doc))
                  (.close doc))))
