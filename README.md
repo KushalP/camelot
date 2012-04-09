@@ -8,7 +8,9 @@ Camelot is a fast, nimble PDF generation and manipulation library.
 
 Add camelot as a dependency to your project. Jars are [published to clojars.org](https://clojars.org/camelot)
 
-    [camelot "0.1.1"]
+``` clojure
+[camelot "0.1.1"]
+```
 
 Start using the library!
 
