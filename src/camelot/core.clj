@@ -1,7 +1,9 @@
 (ns camelot.core
   (:import (org.apache.pdfbox.pdmodel PDDocument PDPage)
            (org.apache.pdfbox.pdmodel.edit PDPageContentStream)
-           (org.apache.pdfbox.pdmodel.font PDType1Font)))
+           (org.apache.pdfbox.pdmodel.font PDType1Font)
+           (org.apache.pdfbox.util PDFMergerUtility)
+           (java.io FileInputStream)))
 
 (defonce font-map
   {"Times-Roman"           PDType1Font/TIMES_ROMAN
@@ -25,8 +27,10 @@
   (font-map name))
 
 (defn save-as
-  [doc-map filename]
   "Given a map representing the document to be built, and a filename, saves the PDF."
+  [doc-map filename]
+  {:pre [(and (map? doc-map)
+              (string? filename))]}
   (let [page (PDPage.)
         doc (doto (PDDocument.)
               (.addPage page))
@@ -42,3 +46,34 @@
       (finally (if (not (nil? doc))
                  (.close doc))))
     doc))
+
+(defn merge-pdfs
+  "Given a vector of existing PDF files (strings), and a filename to
+   save them to, merge the PDF files into a single PDF and save it
+   to the location filename"
+  [pdf-files filename]
+  {:pre [(and (string? filename)
+              (every? string? pdf-files))]}
+  (let [start-doc (PDDocument/load (FileInputStream. (first pdf-files)))
+        pdfs      (rest pdf-files)]
+    (try
+      (loop [merger      (PDFMergerUtility.)
+             destination start-doc
+             files       pdfs]
+        (if (empty? files)
+          destination
+          (do
+            (let [next   (FileInputStream. (first pdfs))
+                  source (PDDocument/load next)]
+              (try
+                (.appendDocument merger destination source)
+                (finally
+                 (.close source)
+                 (.close next))))
+            (recur merger
+                   destination
+                   (rest files)))))
+      (.save start-doc filename)
+      (finally (if (not (nil? start-doc))
+                 (.close start-doc))))
+    start-doc))
