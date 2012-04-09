@@ -1,3 +1,8 @@
+0.1.1 (2012-04-09)
+==================
+
+* Added `(merge-pdfs ..)` which can merge a provided list of PDF files into a single PDF file.
+
 0.1.0 (2012-04-09)
 ==================
 
