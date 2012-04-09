@@ -32,7 +32,7 @@ Start using the library!
 
 ;; Merge a number of existing PDF files.
 (-> ["filea.pdf" "fileb.pdf" "filec.pdf" "filed.pdf"]
-    (merge-pdfs "/tmp/merged.pdf"
+    (merge-pdfs "/tmp/merged.pdf"))
 
 ;; Get a map of metadata from an existing PDF file.
 (get-metadata "my-existing-document.pdf")
