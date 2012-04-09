@@ -1,4 +1,5 @@
 (ns camelot.test.helpers
+  (:use [camelot.core])
   (:require [clojure.string :as str]))
 
 (defn random-string
@@ -21,3 +22,11 @@
      (.isDirectory f) "directory"
      (.exists f)      "other" 
      :else            "non-existent")))
+
+(defn create-pdf-helper
+  "Helper to simplify generation of PDF files with given text"
+  [text filename]
+  (-> {:font "Helvetica-Bold"
+       :size 12
+       :text text}
+      (save-as filename)))
