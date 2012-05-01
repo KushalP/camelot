@@ -1,9 +1,10 @@
 (ns camelot.test.core
-  (:use [camelot.core]
-        [camelot.test.helpers])
-  (:use [clojure.test])
-  (:import (org.apache.pdfbox.pdmodel PDDocument)
-           (org.apache.pdfbox.pdmodel.font PDType1Font)))
+  (:use [camelot.core] :reload
+        [camelot.test.helpers]
+        [clojure.test])
+  (:import (org.apache.pdfbox.pdmodel PDDocument PDPage)
+           (org.apache.pdfbox.pdmodel.font PDType1Font)
+           (org.apache.pdfbox.util PDFTextStripper)))
 
 (deftest converts-font-string-to-enum
   (is (= PDType1Font/TIMES_ROMAN (font "Times-Roman")))
@@ -24,7 +25,7 @@
 (deftest save-as-bad-input-throws-assertion-error
   (let [doc-map {:font "Helvetica-Bold"
                  :size 12
-                 :text "Hello World"}
+                 :lines [[{} "Hello World"]]}
         filename (temp-pdf-filename)]
     (is (thrown? AssertionError (save-as [2 3] filename)))
     (is (thrown? AssertionError (save-as doc-map 23)))))
@@ -33,17 +34,37 @@
   (let [filename (temp-pdf-filename)
         doc      (-> {:font "Helvetica-Bold"
                       :size 12
-                      :text "Hello World"}
+                      :lines [[{} "Hello World"]]}
                      (save-as filename))]
     (is (instance? PDDocument doc))
     (is (= "file" (file-kind filename)))
     (is (= 1 (.getPageCount doc)))))
 
+(deftest test-draw-text-lines-for-page
+  (let [dummy-lines (map #(str (first %) " " (last %))
+                         (partition
+                          2
+                          (interleave (range 100)
+                                      (repeat "here be dragons!"))))]
+    (with-open [doc (PDDocument.)]
+      (testing "make sure the text content is as expected"
+        (is (= (.getText (PDFTextStripper.)
+                         (draw-text-lines-for-page
+                          doc
+                          (PDPage. (:A4 page-sizes))
+                          (:A4 page-sizes)
+                          (map #(vec [{:font-size 10} %]) dummy-lines)))
+               (apply str (interleave dummy-lines (repeat "\n"))))))
+
+
+      (testing "make sure the text is spread out over two pages"
+        (is (= (.getPageCount doc) 2))))))
+
 (deftest save-as-builds-a-basic-pdf-file-with-metadata
   (let [filename (temp-pdf-filename)
         doc      (-> {:font "Helvetica-Bold"
                       :size 12
-                      :text "Hello World"
+                      :lines [[{} "Hello World"]]
                       :metadata {:author   "Joe Bloggs"
                                  :title    "Hello World"
                                  :keywords ["test" "hello" "world"]}}

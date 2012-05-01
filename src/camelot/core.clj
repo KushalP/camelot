@@ -1,6 +1,7 @@
 (ns camelot.core
-  (:require [clojure.string :as str])
-  (:import (org.apache.pdfbox.pdmodel PDDocument PDDocumentInformation PDPage)
+  (:import (org.apache.pdfbox.pdmodel PDDocument
+                                      PDDocumentInformation
+                                      PDPage)
            (org.apache.pdfbox.pdmodel.edit PDPageContentStream)
            (org.apache.pdfbox.pdmodel.font PDType1Font)
            (org.apache.pdfbox.util PDFMergerUtility)
@@ -23,32 +24,74 @@
    "Symbol"                PDType1Font/SYMBOL
    "ZapfDingbats"          PDType1Font/ZAPF_DINGBATS})
 
+(defonce page-sizes
+  {:A0 PDPage/PAGE_SIZE_A0
+   :A1 PDPage/PAGE_SIZE_A1
+   :A2 PDPage/PAGE_SIZE_A2
+   :A3 PDPage/PAGE_SIZE_A3
+   :A4 PDPage/PAGE_SIZE_A4
+   :A5 PDPage/PAGE_SIZE_A5
+   :A6 PDPage/PAGE_SIZE_A6
+   :letter PDPage/PAGE_SIZE_LETTER})
+
 (defn font
   "Given a string representing a font, returns the equivalent ENUM."
   [^String name]
   (font-map name))
 
+(defn draw-text-lines-for-page
+  "Given PDocument, PDPage, PDRectangle and sequence of lines
+  (e.g. [[{:font-size 10 :font-face \"Helvetica-Bold\"} \"Hello, World!\"}]),
+   produces a PDocument with the provided text."
+  [doc page page-size lines]
+  (let [start-x 35
+        start-y (- (.getUpperRightY page-size) 75)]
+
+    (do
+      (.addPage doc page))
+      
+    (with-open [content (PDPageContentStream. doc page)]
+      (loop [lines lines
+             start-y start-y]
+        (when-let [[line-meta line-content] (first lines)]
+          (let [font-face (font (or (:font-face line-meta) "Helvetica-Bold"))
+                font-size (or (:font-size line-meta) 10)]
+            (doto content
+               (.setFont font-face font-size)
+               (.beginText)
+               (.moveTextPositionByAmount start-x start-y)
+               (.drawString line-content)
+               (.endText))
+            (let [new-y (- start-y (* font-size 1.2))]
+              (if (.contains page-size start-x (- new-y 30))
+                (recur (rest lines) new-y)
+                (do
+                  (.close content)
+                  (draw-text-lines-for-page doc
+                                            (PDPage. page-size)
+                                            page-size
+                                            (rest lines))))))))))
+
+  doc)
+
 (defn save-as
-  "Given a map representing the document to be built, and a filename, saves the PDF."
+  "Given a map representing the document to be built, and a filename,
+  saves the PDF."
   [doc-map filename]
   {:pre [(and (map? doc-map)
               (string? filename))]}
-  (let [page    (PDPage.)
-        doc     (doto (PDDocument.)
-                  (.addPage page))
-        content (PDPageContentStream. doc page)]
-    (try
-      (.beginText content)
-      (.setFont content (font (doc-map :font)) (doc-map :size))
-      (.moveTextPositionByAmount content 100 700)
-      (.drawString content (doc-map :text))
-      (.endText content)
-      (.close content)
-      (when (contains? doc-map :metadata)
-        (set-metadata doc (doc-map :metadata)))
-      (.save doc filename)
-      (finally (if (not (nil? doc))
-                 (.close doc))))
+  (with-open [doc (PDDocument.)]
+    (let [page-size (get page-sizes (or (:page-size doc-map) :A4))]
+      (draw-text-lines-for-page doc
+                                (PDPage. page-size)
+                                page-size
+                                (:lines doc-map)))
+
+    (when (contains? doc-map :metadata)
+      (set-metadata doc (:metadata doc-map)))
+
+    (.save doc filename)
+
     doc))
 
 (defn merge-pdfs
