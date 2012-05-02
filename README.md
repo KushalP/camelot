@@ -15,7 +15,7 @@ Camelot (this library) is named after the thoughts and discussions laid out in t
 Add camelot as a dependency to your project. Jars are [published to clojars.org](https://clojars.org/camelot).
 
 ``` clojure
-[camelot "0.1.3"]
+[camelot "0.2.0"]
 ```
 
 Start using the library!
