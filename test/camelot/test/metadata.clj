@@ -17,10 +17,14 @@
     (is (= (get-metadata filename)
            {:author   "Joe Bloggs"
             :title    "Hello World"
+            :subject  nil
             :keywords ["test" "hello" "world"]
-            :producer nil
             :trapped  nil
-            :creator  nil}))))
+            :creator  nil
+            :pages    1
+            :created  nil
+            :modified nil
+            :producer nil}))))
 
 (deftest set-metadata-saves-metadata-to-pddocument
   (let [metadata {:author   "Joe Bloggs"

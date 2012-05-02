@@ -11,10 +11,14 @@
     (try
       {:author   (.getAuthor info)
        :title    (.getTitle info)
+       :subject  (.getSubject info)
        :keywords (str/split (.getKeywords info) #", ")
-       :producer (.getProducer info)
        :trapped  (.getTrapped info)
-       :creator  (.getCreator info)}
+       :creator  (.getCreator info)
+       :pages    (.getNumberOfPages doc)
+       :created  (.getCreationDate info)
+       :modified (.getModificationDate info)
+       :producer (.getProducer info)}
       (finally (if (not (nil? doc))
                  (.close doc))))))
 
