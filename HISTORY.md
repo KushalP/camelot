@@ -1,7 +1,7 @@
-0.1.4 (2012-05-02)
+0.2.0 (2012-05-02)
 ==================
 
-[Full changelog](https://github.com/KushalP/camelot/compare/0.1.4...0.1.3)
+[Full changelog](https://github.com/KushalP/camelot/compare/0.2.0...0.1.3)
 
 * Now using Clojure 1.4
 * Documents can have multiple lines of text ([#1](https://github.com/KushalP/camelot/pull/1) (Filip de Waard))
