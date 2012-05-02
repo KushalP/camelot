@@ -23,7 +23,7 @@ Start using the library!
 ``` clojure
 ;; Create PDF files with some text.
 (-> {:font "Helvetica-Bold"
-      :page-size :A6
+     :page-size :A6
      :lines [[{:font-face "Times-Roman" :font-size 25} "Hello, world!"]
              [{} "Here be dragons!"]]
      :metadata {:author   "Joe Bloggs"
