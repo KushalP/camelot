@@ -41,15 +41,13 @@
 
 (defn draw-text-lines-for-page
   "Given PDocument, PDPage, PDRectangle and sequence of lines
-  (e.g. [[{:font-size 10 :font-face \"Helvetica-Bold\"} \"Hello, World!\"}]),
+   (e.g. [[{:font-size 10 :font-face \"Helvetica-Bold\"} \"Hello, World!\"}]),
    produces a PDocument with the provided text."
   [doc page page-size lines]
   (let [start-x 35
         start-y (- (.getUpperRightY page-size) 75)]
-
     (do
       (.addPage doc page))
-      
     (with-open [content (PDPageContentStream. doc page)]
       (loop [lines lines
              start-y start-y]
@@ -57,11 +55,11 @@
           (let [font-face (font (or (:font-face line-meta) "Helvetica-Bold"))
                 font-size (or (:font-size line-meta) 10)]
             (doto content
-               (.setFont font-face font-size)
-               (.beginText)
-               (.moveTextPositionByAmount start-x start-y)
-               (.drawString line-content)
-               (.endText))
+              (.setFont font-face font-size)
+              (.beginText)
+              (.moveTextPositionByAmount start-x start-y)
+              (.drawString line-content)
+              (.endText))
             (let [new-y (- start-y (* font-size 1.2))]
               (if (.contains page-size start-x (- new-y 30))
                 (recur (rest lines) new-y)
@@ -71,7 +69,6 @@
                                             (PDPage. page-size)
                                             page-size
                                             (rest lines))))))))))
-
   doc)
 
 (defn save-as
@@ -86,12 +83,9 @@
                                 (PDPage. page-size)
                                 page-size
                                 (:lines doc-map)))
-
     (when (contains? doc-map :metadata)
       (set-metadata doc (:metadata doc-map)))
-
     (.save doc filename)
-
     doc))
 
 (defn merge-pdfs
