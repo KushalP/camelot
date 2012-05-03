@@ -137,7 +137,7 @@
               (map-indexed (fn [i row]
                              (apply
                               table-row
-                              (if (and (= i 0)
+                              (if (and (zero? i)
                                        (not (table-row-has-attributes? row)))
                                 (cons {:border-width "0.5pt"
                                        :keep-with-next "always"}
