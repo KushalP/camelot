@@ -1,6 +1,3 @@
-;; src/camelot/fo.clj: Apache FOP support for Camelot
-;; Copyright 2012, F.M. (Filip) de Waard <fmw@vixu.com>.
-
 (ns camelot.fo
   (:require [clojure.data.xml :as xml])
   (:import [java.io File BufferedOutputStream FileOutputStream StringReader]

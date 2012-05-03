@@ -1,6 +1,3 @@
-;; test/camelot/test/fo.clj tests for Apache FOP code
-;; Copyright 2012, F.M. (Filip) de Waard <fmw@vixu.com>.
-
 (ns camelot.test.fo
   (:use [clojure.test]
         [camelot.test.helpers]
