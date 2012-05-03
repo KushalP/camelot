@@ -46,8 +46,7 @@
   [doc page page-size lines]
   (let [start-x 35
         start-y (- (.getUpperRightY page-size) 75)]
-    (do
-      (.addPage doc page))
+    (.addPage doc page)
     (with-open [content (PDPageContentStream. doc page)]
       (loop [lines lines
              start-y start-y]
