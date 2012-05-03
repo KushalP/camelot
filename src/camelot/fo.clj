@@ -20,38 +20,34 @@
            region-body
            region-before
            region-after]}]
-  (xml/element
-   :fo:layout-master-set
-   {}
-   (xml/element
-    :fo:simple-page-master
-    {:master-name "first"
-     :margin-right (or margin-right "1.5cm")
-     :margin-left (or margin-left "1.5cm")
-     :margin-bottom (or margin-bottom "2cm")
-     :margin-top (or margin-top "1cm")
-     :page-width (or page-width "211mm")
-     :page-height (or page-height "297mm")}
-    (xml/element
-     :fo:region-body
-     (if (map? region-body)
-       region-body
-       {:margin-top "0cm"}))
-    (xml/element
-     :fo:region-before
-     (if (map? region-before)
-       region-before
-       {:extent "1cm"}))
-    (xml/element
-     :fo:region-after
-     (if (map? region-after)
-       region-after
-       {:extent "1.5cm"})))))
+  (xml/element :fo:layout-master-set
+               {}
+               (xml/element :fo:simple-page-master
+                            {:master-name "first"
+                             :margin-right (or margin-right "1.5cm")
+                             :margin-left (or margin-left "1.5cm")
+                             :margin-bottom (or margin-bottom "2cm")
+                             :margin-top (or margin-top "1cm")
+                             :page-width (or page-width "211mm")
+                             :page-height (or page-height "297mm")}
+                            (xml/element :fo:region-body
+                                         (if (map? region-body)
+                                           region-body
+                                           {:margin-top "0cm"}))
+                            (xml/element :fo:region-before
+                                         (if (map? region-before)
+                                           region-before
+                                           {:extent "1cm"}))
+                            (xml/element :fo:region-after
+                                         (if (map? region-after)
+                                           region-after
+                                           {:extent "1.5cm"})))))
 
 (defn block?
   "Returns true if the provided argument is a block"
   [x]
-  (and (= (class x) clojure.data.xml.Element) (= (:tag x) :fo:block)))
+  (and (= (class x) clojure.data.xml.Element)
+       (= (:tag x) :fo:block)))
 
 (defn block
   "Defines a fo:block with the given attributes (optional) and
@@ -92,7 +88,8 @@
   "Returns true if the provided sequence starts with a map
    that isn't a block."
   [row]
-  (and (map? (first row)) (not (block? (first row)))))
+  (and (map? (first row))
+       (not (block? (first row)))))
 
 (defn table-row
   "Defines a table row with an optional first argument
@@ -129,17 +126,14 @@
   ([columns rows]
      (table {} columns rows))
   ([attrs columns rows]
-     (apply (partial xml/element
-                     :fo:table
+     (apply (partial xml/element :fo:table
                      (if (not-empty attrs)
                        attrs
                        {:border-width "0.5pt"}))
             (conj
              (vec (map table-column columns))
              (apply
-              (partial xml/element
-                       :fo:table-body
-                       {})
+              (partial xml/element :fo:table-body {})
               (map-indexed (fn [i row]
                              (apply
                               table-row
@@ -164,10 +158,8 @@
   (apply
    (partial xml/element
             (cond
-             (= type :static-content)
-             :fo:static-content
-             (= type :flow)
-             :fo:flow)
+             (= type :static-content) :fo:static-content
+             (= type :flow) :fo:flow)
             {:flow-name name})
    blocks))
 
@@ -184,12 +176,10 @@
   "Constructs a document with the :header-blocks and :footer-blocks
    from the provided settings map and all provided blocks."
   [settings & body-blocks]
-  (xml/element
-   :fo:root
-   {:xmlns:fo "http://www.w3.org/1999/XSL/Format"}
-   (layout (or (:layout settings) {}))
-   (xml/element
-    :fo:page-sequence {:master-reference "first"}
+  (xml/element :fo:root
+               {:xmlns:fo "http://www.w3.org/1999/XSL/Format"}
+               (layout (or (:layout settings) {}))
+   (xml/element :fo:page-sequence {:master-reference "first"}
     (apply header (or (:header-blocks settings) [(block "")]))
     (apply footer (or (:footer-blocks settings) [(block "")]))
     (apply body body-blocks))))
