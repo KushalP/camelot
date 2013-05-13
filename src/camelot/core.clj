@@ -103,7 +103,7 @@
         (if (empty? files)
           destination
           (do
-            (let [next   (FileInputStream. (first pdfs))
+            (let [next   (FileInputStream. (first files))
                   source (PDDocument/load next)]
               (try
                 (.appendDocument merger destination source)
