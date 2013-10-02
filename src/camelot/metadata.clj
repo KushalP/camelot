@@ -13,7 +13,7 @@
        :title    (.getTitle info)
        :subject  (.getSubject info)
        :keywords (if-let [keywords (.getKeywords info)]
-                   (string/split keywords #", ")
+                   (str/split keywords #", ")
                    [])
        :trapped  (.getTrapped info)
        :creator  (.getCreator info)
