@@ -26,6 +26,10 @@
             :modified nil
             :producer nil}))))
 
+(deftest get-metadata-handles-nil-keywords
+  (let [filename "resources/pdf/blank.pdf"]
+    (is (:keywords (get-metadata filename) []))))
+
 (deftest set-metadata-saves-metadata-to-pddocument
   (let [metadata {:author   "Joe Bloggs"
                   :title    "Hello World"
