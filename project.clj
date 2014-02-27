@@ -1,4 +1,4 @@
-(defproject camelot "0.2.2-SNAPSHOT"
+(defproject camelot "0.2.2"
   :description "A fast, nimble PDF generation and manipulation library"
   :url "http://github.com/KushalP/camelot"
   :license {:name "Eclipse Public License"
